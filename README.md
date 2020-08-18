@@ -1,2 +1,2 @@
 # simonsays
-A simon says game
+A cool simon says game
