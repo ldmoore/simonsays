@@ -152,7 +152,6 @@
                         img.hidden = false;
                     }
                     let utterance = new SpeechSynthesisUtterance(text);
-                    utterance.voice = window.speechSynthesis.getVoices()[0];
                     utterance.onend = function () {
                         setTimeout(function () {
                             let resultInfo = `${simonSaid ? "If you didn't touch your " : "Simon didn't say to do that! If you touched your "}${bodyPart.name}, you are out! If you're out, click the I'm Out button.`;
@@ -162,7 +161,6 @@
                             resultText.hidden = false;
                             outBtn.hidden = false;
                             let resultUtterance = new SpeechSynthesisUtterance(resultInfo);
-                            resultUtterance.voice = window.speechSynthesis.getVoices()[0];
                             resultUtterance.onend = function () {
                                 setTimeout(function () {
                                     resultText.hidden = true;
