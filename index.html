@@ -33,145 +33,153 @@
 <p>Made by <a href="https://github.com/ldmoore">Lucas Moore</a></p>
 <script>
     let startBtn = document.getElementById("start-btn");
-    let outBtn = document.getElementById("out-btn");
-    let scoreShow = document.getElementById("score");
     let infoText = document.getElementById("info");
-    let img = document.getElementById("img");
-    let resultText = document.getElementById("result");
-    let gameInProgress = false;
-    let gameNum = 0;
-    startBtn.addEventListener("click", function() {
-        startBtn.hidden = true;
-        scoreShow.hidden = false;
-        document.getElementById("mode").hidden = true;
-        gameInProgress = true;
-        let modes = {
-            easy: {
-                pictures: true,
-                time: 5000,
-                value: 7,
-                name: "Easy",
-                text: true
-            },
-            medium: {
-                time: 3000,
-                value: 6,
-                name: "Medium",
-                text: true
-            },
-            hard: {
-                time: 2000,
-                value: 5,
-                name: "Hard"
-            }
-        };
-        let mode = modes[document.getElementById("mode").value];
-        let bodyParts = [{
-            name: "head",
-            picture: "https://lh3.googleusercontent.com/proxy/H8tmMihuvGsoaj08kQLhw4GtxmB_TWvgCzzm7MS5OZGY87xs4ACost_9LQC-6lXZ1SpvgH2y-Qa7tmLNIYPRNlVjCOX15zGuS_572hli4Sq9D0HO7qHWems1c4lply-uKw"
-        },
-            {
-                name: "shoulders",
-                picture: "https://cdn.clipart.email/cf2fa92bd3583d1114647f0fcf41ea3e_royalty-free-touch-shoulder-stock-images-photos-vectors-_156-280.jpeg"
-            },
-            {
-                name: "knees",
-                picture: "https://image.shutterstock.com/image-vector/illustration-little-boy-demonstrating-different-260nw-622304939.jpg"
-            },
-            {
-                name: "elbows",
-                picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRmuuNcEeRQKXpdmaL49DioOqi9cq63VFu5aRhOQLKI6V5kGYthU8dHlJvB82EAADWp8O0Fh7BbU2KTppH70gYUrLTbjS1Igm4y_A&usqp=CAU&ec=45690273"
-            },
-            {
-                name: "ears",
-                picture: "https://i.ytimg.com/vi/tOTiWCfIe5M/maxresdefault.jpg"
-            },
-            {
-                name: "eyes",
-                picture: "https://johngoosey.com/wp-content/uploads/avoid-touching-your-eyes.jpg"
-            },
-            {
-                name: "nose",
-                picture: "https://thescienceofearlylearning.com/wp-content/uploads/2017/07/touch-your-nose.jpg"
-            },
-            {
-                name: "mouth",
-                picture: "https://image.shutterstock.com/image-photo/best-way-prevent-illness-avoid-260nw-1674529657.jpg"
-            },
-            {
-                name: "chin",
-                picture: "https://www.healthline.com/hlcmsresource/images/Image-Galleries/Lump-under-chin/2561-Man_looking_his_Chin-732x549-thumbnail.jpg"
-            },
-            {
-                name: "belly button",
-                picture: "https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/21/15/istock-495624342.jpg?w968h681"
-            },
-            {
-                name: "feet",
-                picture: "https://previews.123rf.com/images/lenm/lenm1710/lenm171000049/87819750-illustration-of-a-little-boy-demonstrating-the-different-body-parts-by-touching-his-toes.jpg"
-            },
-            {
-                name: "hips",
-                picture: "https://bodylanguagecentral.com/wp-content/uploads/2019/10/manwithhandsonhips.jpg"
-            }];
-        document.getElementById("title").innerHTML = `Simon Says: ${mode.name} Mode`;
-        let score = -1;
-        outBtn.addEventListener("click", function() {
-            window.speechSynthesis.cancel();
-            infoText.innerHTML = `Game over! Your score was ${score.toString()}`;
-            infoText.hidden = false;
-            startBtn.innerHTML = "Start Over";
-            startBtn.hidden = false;
-            outBtn.hidden = true;
-            resultText.hidden = true;
-            img.hidden = true;
-            scoreShow.hidden = true;
-            gameInProgress = false;
-            document.getElementById("mode").hidden = false;
-            gameNum++;
-        });
-        simon(gameNum);
-        function simon(num) {
-            score++;
-            scoreShow.innerHTML = `Score: ${score}`;
-            if (gameInProgress && num === gameNum) {
-                let bodyPart = bodyParts[Math.floor(Math.random() * bodyParts.length)];
-                let simonSaid = Math.floor(Math.random() * 10) < mode.value;
-                let text = `${simonSaid ? "Simon says t" : "T"}ouch your ${bodyPart.name}!`;
-                if (infoText.innerHTML === text) return simon(num);
-                infoText.innerHTML = text;
-                if (mode.text) infoText.hidden = false;
-                else if (!infoText.hidden) infoText.hidden = true;
-                if (mode.pictures && bodyPart.picture) {
-                    img.src = bodyPart.picture;
-                    img.hidden = false;
+    let modeSelect = document.getElementById("mode");
+    if (window.speechSynthesis) {
+        let outBtn = document.getElementById("out-btn");
+        let scoreShow = document.getElementById("score");
+        let img = document.getElementById("img");
+        let resultText = document.getElementById("result");
+        let gameInProgress = false;
+        let gameNum = 0;
+        startBtn.addEventListener("click", function () {
+            startBtn.hidden = true;
+            scoreShow.hidden = false;
+            modeSelect.hidden = true;
+            gameInProgress = true;
+            let modes = {
+                easy: {
+                    pictures: true,
+                    time: 5000,
+                    value: 7,
+                    name: "Easy",
+                    text: true
+                },
+                medium: {
+                    time: 3000,
+                    value: 6,
+                    name: "Medium",
+                    text: true
+                },
+                hard: {
+                    time: 2000,
+                    value: 5,
+                    name: "Hard"
                 }
-                let utterance = new SpeechSynthesisUtterance(text);
-                utterance.voice = window.speechSynthesis.getVoices()[0];
-                utterance.onend = function(){
-                    setTimeout(function() {
-                        let resultInfo = `${simonSaid ? "If you didn't touch your " : "Simon didn't say to do that! If you touched your "}${bodyPart.name}, you are out! If you're out, click the I'm Out button.`;
-                        resultText.innerHTML = resultInfo;
-                        infoText.hidden = true;
-                        img.hidden = true;
-                        resultText.hidden = false;
-                        outBtn.hidden = false;
-                        let resultUtterance = new SpeechSynthesisUtterance(resultInfo);
-                        resultUtterance.voice = window.speechSynthesis.getVoices()[0];
-                        resultUtterance.onend = function() {
-                            setTimeout(function() {
-                                resultText.hidden = true;
-                                outBtn.hidden = true;
-                                simon(num);
-                            }, 1500);
-                        };
-                        window.speechSynthesis.speak(resultUtterance);
-                    }, mode.time);
-                };
-                window.speechSynthesis.speak(utterance);
+            };
+            let mode = modes[modeSelect.value];
+            let bodyParts = [{
+                name: "head",
+                picture: "https://lh3.googleusercontent.com/proxy/H8tmMihuvGsoaj08kQLhw4GtxmB_TWvgCzzm7MS5OZGY87xs4ACost_9LQC-6lXZ1SpvgH2y-Qa7tmLNIYPRNlVjCOX15zGuS_572hli4Sq9D0HO7qHWems1c4lply-uKw"
+            },
+                {
+                    name: "shoulders",
+                    picture: "https://cdn.clipart.email/cf2fa92bd3583d1114647f0fcf41ea3e_royalty-free-touch-shoulder-stock-images-photos-vectors-_156-280.jpeg"
+                },
+                {
+                    name: "knees",
+                    picture: "https://image.shutterstock.com/image-vector/illustration-little-boy-demonstrating-different-260nw-622304939.jpg"
+                },
+                {
+                    name: "elbows",
+                    picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRmuuNcEeRQKXpdmaL49DioOqi9cq63VFu5aRhOQLKI6V5kGYthU8dHlJvB82EAADWp8O0Fh7BbU2KTppH70gYUrLTbjS1Igm4y_A&usqp=CAU&ec=45690273"
+                },
+                {
+                    name: "ears",
+                    picture: "https://i.ytimg.com/vi/tOTiWCfIe5M/maxresdefault.jpg"
+                },
+                {
+                    name: "eyes",
+                    picture: "https://johngoosey.com/wp-content/uploads/avoid-touching-your-eyes.jpg"
+                },
+                {
+                    name: "nose",
+                    picture: "https://thescienceofearlylearning.com/wp-content/uploads/2017/07/touch-your-nose.jpg"
+                },
+                {
+                    name: "mouth",
+                    picture: "https://image.shutterstock.com/image-photo/best-way-prevent-illness-avoid-260nw-1674529657.jpg"
+                },
+                {
+                    name: "chin",
+                    picture: "https://www.healthline.com/hlcmsresource/images/Image-Galleries/Lump-under-chin/2561-Man_looking_his_Chin-732x549-thumbnail.jpg"
+                },
+                {
+                    name: "belly button",
+                    picture: "https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/09/21/15/istock-495624342.jpg?w968h681"
+                },
+                {
+                    name: "feet",
+                    picture: "https://previews.123rf.com/images/lenm/lenm1710/lenm171000049/87819750-illustration-of-a-little-boy-demonstrating-the-different-body-parts-by-touching-his-toes.jpg"
+                },
+                {
+                    name: "hips",
+                    picture: "https://bodylanguagecentral.com/wp-content/uploads/2019/10/manwithhandsonhips.jpg"
+                }];
+            document.getElementById("title").innerHTML = `Simon Says: ${mode.name} Mode`;
+            let score = -1;
+            outBtn.addEventListener("click", function () {
+                window.speechSynthesis.cancel();
+                infoText.innerHTML = `Game over! Your score was ${score.toString()}`;
+                infoText.hidden = false;
+                startBtn.innerHTML = "Start Over";
+                startBtn.hidden = false;
+                outBtn.hidden = true;
+                resultText.hidden = true;
+                img.hidden = true;
+                scoreShow.hidden = true;
+                gameInProgress = false;
+                modeSelect.hidden = false;
+                gameNum++;
+            });
+            simon(gameNum);
+
+            function simon(num) {
+                score++;
+                scoreShow.innerHTML = `Score: ${score}`;
+                if (gameInProgress && num === gameNum) {
+                    let bodyPart = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+                    let simonSaid = Math.floor(Math.random() * 10) < mode.value;
+                    let text = `${simonSaid ? "Simon says t" : "T"}ouch your ${bodyPart.name}!`;
+                    if (infoText.innerHTML === text) return simon(num);
+                    infoText.innerHTML = text;
+                    if (mode.text) infoText.hidden = false;
+                    else if (!infoText.hidden) infoText.hidden = true;
+                    if (mode.pictures && bodyPart.picture) {
+                        img.src = bodyPart.picture;
+                        img.hidden = false;
+                    }
+                    let utterance = new SpeechSynthesisUtterance(text);
+                    utterance.voice = window.speechSynthesis.getVoices()[0];
+                    utterance.onend = function () {
+                        setTimeout(function () {
+                            let resultInfo = `${simonSaid ? "If you didn't touch your " : "Simon didn't say to do that! If you touched your "}${bodyPart.name}, you are out! If you're out, click the I'm Out button.`;
+                            resultText.innerHTML = resultInfo;
+                            infoText.hidden = true;
+                            img.hidden = true;
+                            resultText.hidden = false;
+                            outBtn.hidden = false;
+                            let resultUtterance = new SpeechSynthesisUtterance(resultInfo);
+                            resultUtterance.voice = window.speechSynthesis.getVoices()[0];
+                            resultUtterance.onend = function () {
+                                setTimeout(function () {
+                                    resultText.hidden = true;
+                                    outBtn.hidden = true;
+                                    simon(num);
+                                }, 1500);
+                            };
+                            window.speechSynthesis.speak(resultUtterance);
+                        }, mode.time);
+                    };
+                    window.speechSynthesis.speak(utterance);
+                }
             }
-        }
-    });
+        });
+    } else {
+        startBtn.hidden = true;
+        infoText.innerHTML = ":( Simon Says can't run on your browser, try using a different one?";
+        modeSelect.hidden = true;
+    }
 </script>
 </body>
 
